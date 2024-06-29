@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using TechJobs6Persistent.Data;
 using TechJobs6Persistent.Models;
 using TechJobs6Persistent.ViewModels;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TechJobs6Persistent.Controllers
 {
     public class EmployerController : Controller
-    { 
-
+    {
         private JobDbContext context;
 
         public EmployerController(JobDbContext dbContext)
@@ -22,7 +16,6 @@ namespace TechJobs6Persistent.Controllers
             context = dbContext;
         }
 
-        // GET: /<controller>/
         [HttpGet]
         public IActionResult Index()
         {
@@ -31,7 +24,7 @@ namespace TechJobs6Persistent.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Add()
         {
             AddEmployerViewModel addEmployerViewModel = new AddEmployerViewModel();
             return View(addEmployerViewModel);
@@ -61,7 +54,5 @@ namespace TechJobs6Persistent.Controllers
             Employer theEmployer = context.Employers.Find(id);
             return View(theEmployer);
         }
-
     }
 }
-
