@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechJobs6Persistent.Data;
 
@@ -10,9 +11,11 @@ using TechJobs6Persistent.Data;
 namespace TechJobs6Persistent.Migrations
 {
     [DbContext(typeof(JobDbContext))]
-    partial class JobDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240629031823_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,19 +24,19 @@ namespace TechJobs6Persistent.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("JobSkills", b =>
+            modelBuilder.Entity("JobSkill", b =>
                 {
-                    b.Property<int>("JobId")
+                    b.Property<int>("JobsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SkillId")
+                    b.Property<int>("SkillsId")
                         .HasColumnType("int");
 
-                    b.HasKey("JobId", "SkillId");
+                    b.HasKey("JobsId", "SkillsId");
 
-                    b.HasIndex("SkillId");
+                    b.HasIndex("SkillsId");
 
-                    b.ToTable("JobSkills");
+                    b.ToTable("JobSkill");
                 });
 
             modelBuilder.Entity("TechJobs6Persistent.Models.Employer", b =>
@@ -97,17 +100,17 @@ namespace TechJobs6Persistent.Migrations
                     b.ToTable("Skills");
                 });
 
-            modelBuilder.Entity("JobSkills", b =>
+            modelBuilder.Entity("JobSkill", b =>
                 {
                     b.HasOne("TechJobs6Persistent.Models.Job", null)
                         .WithMany()
-                        .HasForeignKey("JobId")
+                        .HasForeignKey("JobsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TechJobs6Persistent.Models.Skill", null)
                         .WithMany()
-                        .HasForeignKey("SkillId")
+                        .HasForeignKey("SkillsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -115,17 +118,12 @@ namespace TechJobs6Persistent.Migrations
             modelBuilder.Entity("TechJobs6Persistent.Models.Job", b =>
                 {
                     b.HasOne("TechJobs6Persistent.Models.Employer", "Employer")
-                        .WithMany("Jobs")
+                        .WithMany()
                         .HasForeignKey("EmployerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Employer");
-                });
-
-            modelBuilder.Entity("TechJobs6Persistent.Models.Employer", b =>
-                {
-                    b.Navigation("Jobs");
                 });
 #pragma warning restore 612, 618
         }

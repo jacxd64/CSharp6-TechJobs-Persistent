@@ -6,6 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Add DbContext
+var connectionString = "server=localhost;userid=TechJobs;password=TechJobs;database=TechJobs";
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 26));
+
+builder.Services.AddDbContext<JobDbContext>(options =>
+    options.UseMySql(connectionString, serverVersion));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,4 +35,3 @@ app.MapControllerRoute(
     pattern: "{controller=Job}/{action=Index}/{id?}");
 
 app.Run();
-

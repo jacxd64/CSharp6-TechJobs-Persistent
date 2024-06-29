@@ -2,6 +2,8 @@
 
 <h1>Employers Currently Hiring</h1>
 
+<p><a asp-controller="Employer" asp-action="Add">Add New Employer</a></p>
+
 @if (Model.Count == 0)
 {
     <p>No Employers have been listed yet!</p>
@@ -10,10 +12,10 @@ else
 {
     <table class="table">
         <tr>
-            <th>Id
+            <th>Id</th>
             <th>Employer</th>
         </tr>
-        @foreach (Employer employer in Model)
+        @foreach (var employer in Model)
         {
             <tr>
                 <td>@employer.Id</td>
@@ -22,4 +24,3 @@ else
         }
     </table>
 }
-
