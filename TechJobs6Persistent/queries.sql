@@ -4,6 +4,9 @@
 
 --Part 1: List the columns and their data types in the Jobs table.
 
+--Colums: Id, Name, EmployerId.
+--Data Types: Int, String, Int
+
 --Part 2: Write a query to list the names of the employers in St. Louis City.
 
 SELECT Name 

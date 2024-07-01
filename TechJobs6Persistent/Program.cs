@@ -12,6 +12,7 @@ var serverVersion = new MySqlServerVersion(new Version(8, 0, 26));
 
 builder.Services.AddDbContext<JobDbContext>(options =>
     options.UseMySql(connectionString, serverVersion));
+builder.Services.AddLogging();
 
 var app = builder.Build();
 

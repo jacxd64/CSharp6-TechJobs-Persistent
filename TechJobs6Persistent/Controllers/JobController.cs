@@ -1,32 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TechJobs6Persistent.Data;
 using TechJobs6Persistent.Models;
 using TechJobs6Persistent.ViewModels;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TechJobs6Persistent.Controllers
 {
     public class JobController : Controller
     {
         private JobDbContext context;
+        private readonly ILogger<JobController> _logger;
 
-        public JobController(JobDbContext dbContext)
+        public JobController(JobDbContext dbContext, ILogger<JobController> logger)
         {
             context = dbContext;
+            _logger = logger;
         }
 
-        // GET: /<controller>/
         public IActionResult Index()
         {
             List<Job> jobs = context.Jobs.Include(j => j.Employer).ToList();
-
             return View(jobs);
         }
 
@@ -40,32 +37,42 @@ namespace TechJobs6Persistent.Controllers
         [HttpPost]
         public IActionResult Add(AddJobViewModel addJobViewModel)
         {
+            _logger.LogInformation("Add action hit");
+
             if (ModelState.IsValid)
             {
-                Employer employer = context.Employers.Find(addJobViewModel.EmployerId);
+                _logger.LogInformation("Model is valid");
+                Employer employer = context.Employers.Find((int)addJobViewModel.EmployerId);
 
                 Job newJob = new Job
                 {
                     Name = addJobViewModel.Name,
-                    Employer = employer
+                    Employer = employer,
+                    EmployerId = (int)addJobViewModel.EmployerId
                 };
 
                 context.Jobs.Add(newJob);
                 context.SaveChanges();
+                _logger.LogInformation("Job added successfully");
                 return Redirect("/Job");
             }
 
-            List<Employer> employers = context.Employers.ToList();
-            addJobViewModel.Employers = new List<SelectListItem>();
-
-            foreach (var employer in employers)
+            // Log ModelState errors
+            foreach (var modelState in ModelState.Values)
             {
-                addJobViewModel.Employers.Add(new SelectListItem
+                foreach (var error in modelState.Errors)
                 {
-                    Value = employer.Id.ToString(),
-                    Text = employer.Name
-                });
-            }
+                    _logger.LogError(error.ErrorMessage);
+                }
+    }
+
+            _logger.LogWarning("Model is invalid");
+            List<Employer> employers = context.Employers.ToList();
+            addJobViewModel.Employers = employers.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.Name
+            }).ToList();
 
             return View(addJobViewModel);
         }
@@ -73,7 +80,6 @@ namespace TechJobs6Persistent.Controllers
         public IActionResult Delete()
         {
             ViewBag.jobs = context.Jobs.ToList();
-
             return View();
         }
 
@@ -87,19 +93,14 @@ namespace TechJobs6Persistent.Controllers
             }
 
             context.SaveChanges();
-
             return Redirect("/Job");
         }
 
         public IActionResult Detail(int id)
         {
             Job theJob = context.Jobs.Include(j => j.Employer).Include(j => j.Skills).Single(j => j.Id == id);
-
             JobDetailViewModel jobDetailViewModel = new JobDetailViewModel(theJob);
-
             return View(jobDetailViewModel);
-
         }
     }
 }
-

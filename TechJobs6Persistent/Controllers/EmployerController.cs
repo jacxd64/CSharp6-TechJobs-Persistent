@@ -24,14 +24,14 @@ namespace TechJobs6Persistent.Controllers
         }
 
         [HttpGet]
-        public IActionResult Add()
+        public IActionResult Create()
         {
             AddEmployerViewModel addEmployerViewModel = new AddEmployerViewModel();
             return View(addEmployerViewModel);
         }
 
         [HttpPost]
-        public IActionResult Add(AddEmployerViewModel addEmployerViewModel)
+        public IActionResult ProcessCreateEmployerForm(AddEmployerViewModel addEmployerViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -46,7 +46,7 @@ namespace TechJobs6Persistent.Controllers
                 return Redirect("/Employer");
             }
 
-            return View(addEmployerViewModel);
+            return View("Create", addEmployerViewModel);
         }
 
         public IActionResult About(int id)
